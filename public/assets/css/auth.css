@@ -1,0 +1,19 @@
+html, body {
+    height: 100%;
+}
+body {
+    display: flex;
+    align-items: center;
+}
+.auth-content {
+    width: 100%;
+    max-width: 500px;
+    padding: 15px;
+    margin: auto;
+}
+.logo {
+    width: 6rem;
+}
+.card-body {
+    padding: 1.5rem;
+}

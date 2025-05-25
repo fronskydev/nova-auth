@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji',sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
+<div class="container" style="max-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin: auto;">
+  <h1 style="color: #333;">{{ title }}</h1>
+  <p style="font-size: 16px; color: #555;">Hi {{ user_name }},</p>
+
+  <p style="font-size: 16px; color: #555;">Please click the button below to verify and confirm your email address. This step is essential to complete your email verification.</p>
+
+  <a href="{{ action_url }}" class="button" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px;">{{ action_text }}</a>
+
+  <p style="font-size: 16px; color: #555;">This link will expire in 15 minutes for security reasons.</p>
+
+  <div class="footer" style="margin-top: 20px; font-size: 12px; color: #888; text-align: center;">
+    <p style="font-size: 16px; color: #555;">Kind Regards,<br>{{ sender_name }}</p>
+  </div>
+</div>
+</body>
+</html>
