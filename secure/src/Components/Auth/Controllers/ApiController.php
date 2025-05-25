@@ -62,10 +62,85 @@ class ApiController extends ComponentController
 
         $usersModel = new Users();
 
-        $user = $usersModel->getUserDetails($result["email"]);
-        if (empty($user)) {
+        $userEmail = $usersModel->getUserDetails($result["email"]);
+        $userUsername = $usersModel->getUserDetails($result["username"]);
+        if (empty($userEmail) && empty($userUsername)) {
             $usersModel->create(array(
                 "username" => $result["username"],
+                "email" => $result["email"],
+                "full_name" => $result["full_name"],
+                "is_active" => 1,
+                "is_admin" => 0,
+                "is_social" => 1,
+                "email_verified" => 1
+            ));
+
+            $mail = new Mailer();
+            $templateData = [
+                "title" => "Welcome to " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])),
+                "user_name" => $result["full_name"],
+                "sender_name" => $_ENV["MAIL_FROM_NAME"],
+            ];
+
+            $mail->setHtmlTemplate(MAILER_DIR . "/register.html", $templateData)
+                ->addSubject("Welcome to " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])))
+                ->addRecipient($result["email"])
+                ->setReplyTo($_ENV["MAIL_FROM_ADDRESS"], $_ENV["MAIL_FROM_NAME"])
+                ->send();
+        }
+
+        if (!empty($userEmail) && !empty($userUsername)) {
+            if ($userEmail["id"] !== $userUsername["id"]) {
+                $uniqueUsername = $result["username"];
+                $counter = 1;
+                while (!empty($usersModel->getUserDetails($uniqueUsername))) {
+                    $uniqueUsername = $result["username"] . $counter;
+                    $counter++;
+                }
+
+                $usersModel->update($userEmail["id"], array(
+                    "username" => $uniqueUsername,
+                    "email" => $result["email"],
+                    "full_name" => $result["full_name"],
+                    "is_active" => 1,
+                    "is_admin" => 0,
+                    "is_social" => 1,
+                    "email_verified" => 1
+                ));
+            } else {
+                $usersModel->update($userEmail["id"], array(
+                    "email" => $result["email"],
+                    "username" => $result["username"],
+                    "full_name" => $result["full_name"],
+                    "is_active" => 1,
+                    "is_admin" => 0,
+                    "is_social" => 1,
+                    "email_verified" => 1
+                ));
+            }
+        }
+
+        if (!empty($userEmail) && empty($userUsername)) {
+            $usersModel->update($userEmail["id"], array(
+                "email" => $result["email"],
+                "username" => $result["username"],
+                "full_name" => $result["full_name"],
+                "is_active" => 1,
+                "is_admin" => 0,
+                "is_social" => 1,
+                "email_verified" => 1
+            ));
+        }
+        if (empty($userEmail) && !empty($userUsername)) {
+            $uniqueUsername = $result["username"];
+            $counter = 1;
+            while (!empty($usersModel->getUserDetails($uniqueUsername))) {
+                $uniqueUsername = $result["username"] . $counter;
+                $counter++;
+            }
+
+            $usersModel->create(array(
+                "username" => $uniqueUsername,
                 "email" => $result["email"],
                 "full_name" => $result["full_name"],
                 "is_active" => 1,

@@ -73,7 +73,7 @@ class LoginController extends ComponentController
             return 200;
         }
 
-        if ($user["is_social"] == 1) {
+        if ($user["is_social"] == 1 && $user["password"] == null && $user["password_salt"] == null) {
             $errorMsg = "This account was created using a social login provider. Please use the same provider to log in.";
             PageUtil::redirect(self::LOGIN_PATH, array("ERROR" => $errorMsg, "data" => json_encode($_POST)));
             return 200;
