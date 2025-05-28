@@ -6,7 +6,7 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
 <div class="auth-content">
     <div class="text-center">
         <a href="<?= PUBLIC_URL ?>">
-            <img class="logo white-image-dark" src="<?= PUBLIC_URL . "/assets/images/icons/icon.png" ?>" alt="<?= ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])) ?> Logo" style="display: inline-block;">
+            <img class="logo" src="<?= PUBLIC_URL . "/assets/images/icons/icon.png" ?>" alt="<?= ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])) ?> Logo" style="display: inline-block;">
         </a>
         <h1 class="title">Welcome Back</h1>
         <?php if (AuthComponent::getSettings()["register.enabled"]) { ?>
@@ -37,6 +37,10 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
                 <?php if (isset($_POST["ERROR"])) { ?>
                     <p class="mt-3 mb-0 text-danger text-center">
                         <?= $_POST["ERROR"] ?>
+                    </p>
+                <?php } if (isset($_POST["ERROR"]) && $_POST["ERROR"] === "Your email address is not verified yet.") { ?>
+                    <p class="mt-1 mb-0 text-body-secondary text-center fst-italic" style="font-size: 0.9rem;">
+                        Send a new verification email? <a class="text-decoration-none" href="<?= PUBLIC_URL . "/resend-verification-email/" . encryptText($data["uid"] ?? "") ?>">Click here</a>.
                     </p>
                 <?php } ?>
                 <?php if (isset($_POST["SUCCESS"])) { ?>

@@ -152,6 +152,13 @@ class RegisterController extends ComponentController
 
         if (AuthComponent::getSettings()["verify_email.enabled"]) {
             $authenticationsModel = new Authentications();
+            $authentications = $authenticationsModel->findBy("user_id", $user["id"]);
+            foreach ($authentications as $authentication) {
+                if ($authentication["type"] === AuthTypes::EMAIL_VERIFICATION->name) {
+                    $authenticationsModel->delete($authentication["id"]);
+                }
+            }
+
             $uniqueIdentifier = $authenticationsModel->generateUniqueIdentifier();
 
             $authenticationsModel->create([

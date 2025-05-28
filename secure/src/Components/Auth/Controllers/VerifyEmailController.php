@@ -84,6 +84,71 @@ class VerifyEmailController extends ComponentController
         return 200;
     }
 
+    public function resendVerificationEmail($args): int
+    {
+        if (empty($args)) {
+            return 404;
+        }
+
+        $email = decryptText($args[0]);
+        if (empty($email)) {
+            return 404;
+        }
+
+        $usersModel = new Users();
+        $user = $usersModel->getUserDetails($email);
+        if (!$user) {
+            return 404;
+        }
+
+        if ($user["email_verified"]) {
+            PageUtil::redirect("/login", array("SUCCESS" => "Your email is already verified. You can now log in."));
+            return 200;
+        }
+
+        if (!AuthComponent::getSettings()["verify_email.enabled"]) {
+            $usersModel->update($user["id"], ["email_verified" => 1]);
+            PageUtil::redirect("/login", array("SUCCESS" => "Your email has been verified. You can now log in."));
+            return 200;
+        }
+
+        $authenticationsModel = new Authentications();
+        $authentications = $authenticationsModel->findBy("user_id", $user["id"]);
+        foreach ($authentications as $authentication) {
+            if ($authentication["type"] === AuthTypes::EMAIL_VERIFICATION->name) {
+                $authenticationsModel->delete($authentication["id"]);
+            }
+        }
+
+        $uniqueIdentifier = $authenticationsModel->generateUniqueIdentifier();
+
+        $authenticationsModel->create([
+            "user_id" => $user["id"],
+            "unique_identifier" => $uniqueIdentifier,
+            "type" => AuthTypes::EMAIL_VERIFICATION->name
+        ]);
+
+        $mail = new Mailer();
+        $title = "Verify your email for your " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])) . " account";
+        $templateData = [
+            "title" => $title,
+            "user_name" => $user["full_name"],
+            "sender_name" => $_ENV["MAIL_FROM_NAME"],
+            "action_url" => PUBLIC_URL . "/verify-email/" . $uniqueIdentifier,
+            "action_text" => "Verify Email"
+        ];
+
+        $mail->setHtmlTemplate(MAILER_DIR . "/verify-email.html", $templateData)
+            ->addSubject($title)
+            ->addRecipient($user["email"])
+            ->setReplyTo($_ENV["MAIL_FROM_ADDRESS"], $_ENV["MAIL_FROM_NAME"])
+            ->send();
+
+        PageUtil::redirect("/login", array("SUCCESS" => "A new verification email has been sent to your email address. Please check your inbox."));
+
+        return 200;
+    }
+
     protected function getComponentName(): string
     {
         return "Auth";
