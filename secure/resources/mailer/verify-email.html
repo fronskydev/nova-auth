@@ -6,18 +6,18 @@
   <title>{{ title }}</title>
 </head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji',sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
-<h1 style="color: #333;">{{ title }}</h1>
-<p style="font-size: 16px; color: #555;">Hi {{ user_name }},</p>
+  <h1 style="color: #333;">{{ title }}</h1>
+  <p style="font-size: 16px; color: #555;">Hi {{ user_name }},</p>
 
-<p style="font-size: 16px; color: #555;">Please click the button below to verify and confirm your email address. This step is essential to complete your email verification.</p>
+  <p style="font-size: 16px; color: #555;">Please click the button below to verify and confirm your email address. This step is essential to complete your email verification.</p>
 
-<a href="{{ action_url }}" class="button" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 10px; margin-top: 15px;">{{ action_text }}</a>
+  <a href="{{ action_url }}" class="button" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 10px; margin-top: 15px;">{{ action_text }}</a>
 
-<p style="font-size: 16px; color: #555;">This link will expire in 15 minutes for security reasons.</p>
+  <p style="font-size: 16px; color: #555;">This link will expire in 15 minutes for security reasons.</p>
 
-<div class="footer" style="margin-top: 20px; font-size: 12px; color: #888;">
-  <p style="font-size: 16px; color: #555;">Kind Regards,<br>{{ sender_name }}</p>
-</div>
-</div>
+  <div class="footer" style="margin-top: 20px; font-size: 12px; color: #888;">
+    <p style="font-size: 16px; color: #555;">Kind Regards,<br>{{ sender_name }}</p>
+  </div>
+  </div>
 </body>
 </html>
