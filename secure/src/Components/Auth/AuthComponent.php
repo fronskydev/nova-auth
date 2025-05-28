@@ -3,9 +3,13 @@
 namespace src\Components\Auth;
 
 use src\Abstracts\Component;
+use src\Core\PageUtil;
+use src\Models\Users;
 
 class AuthComponent extends Component
 {
+    private const string LOGIN_PATH = "/login";
+
     private static array $settings = [
         "login.enabled" => true,
         "register.enabled" => true,
@@ -25,6 +29,41 @@ class AuthComponent extends Component
     public function __construct()
     {
         $this->actAsController = true;
+
+        if (AuthUtil::isClientLoggedIn()) {
+            $usersModel = new Users();
+            $user = $usersModel->getUserDetails(AuthUtil::getUserData()["id"]);
+            if (!$user) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
+            if ($user["is_active"] !== 1) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
+            if ($user["username"] !== AuthUtil::getUserData()["username"]) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
+            if ($user["email"] !== AuthUtil::getUserData()["email"]) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
+            if ($user["full_name"] !== AuthUtil::getUserData()["full_name"]) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
+            if ($user["is_admin"] !== AuthUtil::getUserData()["is_admin"]) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
+        }
     }
 
     /**
