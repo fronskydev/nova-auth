@@ -63,6 +63,11 @@ class AuthComponent extends Component
                 PageUtil::redirect(self::LOGIN_PATH);
                 return 302;
             }
+            if (getCookieValue("cookies_accepted") === "no" && isCookieActive("user")) {
+                AuthUtil::logoutClient();
+                PageUtil::redirect(self::LOGIN_PATH);
+                return 302;
+            }
         }
     }
 
