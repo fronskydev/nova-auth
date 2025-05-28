@@ -4,6 +4,7 @@ return [
     // Legals
     "/terms" => ["method" => "GET", "action" => "LegalsController@terms"],
     "/privacy" => ["method" => "GET", "action" => "LegalsController@privacy"],
+    "/copyright" => ["method" => "GET", "action" => "LegalsController@copyright"],
 
     // Auth
     "/login" => [
@@ -27,13 +28,17 @@ return [
     "/reset-password" => [
         "method" => ["GET", "POST"],
         "action" => "ResetPasswordController@index",
-        "middleware" => ["NoAuthMiddleware", "ResetPasswordMiddleware"]
+        "middleware" => "NoAuthMiddleware"
     ], "/reset-password/submit" => ["method" => "POST", "action" => "ResetPasswordController@submit", "middleware" => "NoAuthMiddleware"],
 
     "/verify-email" => [
         "method" => "GET",
-        "action" => "VerifyEmailController@index",
-        "middleware" => "VerifyEmailMiddleware"
+        "action" => "VerifyEmailController@index"
+    ],
+
+    "/resend-verification-email" => [
+        "method" => "GET",
+        "action" => "VerifyEmailController@resendVerificationEmail",
     ],
 
     "/api" => [
