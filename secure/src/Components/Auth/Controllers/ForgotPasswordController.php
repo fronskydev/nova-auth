@@ -79,20 +79,20 @@ class ForgotPasswordController extends ComponentController
         $uniqueIdentifier = $authenticationsModel->generateUniqueIdentifier();
         $authenticationsModel->create([
             "user_id" => $user["id"],
-            "unique_identifier" => $uniqueIdentifier,
+            "unique_identifier" => encryptText($uniqueIdentifier, "_unique_identifier"),
             "type" => AuthTypes::PASSWORD_RESET->name
         ]);
 
         $mail = new Mailer();
         $mail->setHtmlTemplate(MAILER_DIR . "/reset-password.html", [
             "title" => "Reset Your Password",
-            "user_name" => $user["full_name"],
+            "user_name" => decryptText($user["full_name"], "_full_name"),
             "sender_name" => $_ENV["MAIL_FROM_NAME"],
             "action_url" => PUBLIC_URL . "/reset-password/" . $uniqueIdentifier,
             "action_text" => "Reset Password"
         ])
             ->addSubject("Reset Your Password")
-            ->addRecipient($user["email"])
+            ->addRecipient(decryptText($user["email"], "_email"))
             ->send();
 
         PageUtil::redirect(self::FORGOT_PASSWORD_PATH, array("SUCCESS" => $successMsg));

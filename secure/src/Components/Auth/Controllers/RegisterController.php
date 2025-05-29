@@ -40,9 +40,6 @@ class RegisterController extends ComponentController
         return 200;
     }
 
-    /**
-     * @throws RandomException
-     */
     public function submit(): int
     {
         if (!AuthComponent::getSettings()["register.enabled"]) {
@@ -111,15 +108,15 @@ class RegisterController extends ComponentController
             $emailVerified = 0;
         }
 
-        $passwordSalt = generateRandomString(16);
-        $password = encryptText($password . $passwordSalt);
+        $passwordSalt = generateRandomString(32);
+        $password = $password . $passwordSalt;
         $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
         $usersModel->create(array(
-            "username" => $username,
-            "email" => $email,
-            "full_name" => $fullName,
+            "username" => encryptText($username, "_username"),
+            "email" => encryptText($email, "_email"),
+            "full_name" => encryptText($fullName, "_full_name"),
             "password" => $passwordHash,
-            "password_salt" => encryptText($passwordSalt),
+            "password_salt" => encryptText($passwordSalt, "_password_salt"),
             "is_active" => 1,
             "is_admin" => 0,
             "is_social" => 0,
@@ -136,9 +133,9 @@ class RegisterController extends ComponentController
 
         $userData = array(
             "id" => $user["id"],
-            "username" => $user["username"],
-            "email" => $user["email"],
-            "full_name" => $user["full_name"],
+            "username" => decryptText($user["username"], "_username"),
+            "email" => decryptText($user["email"], "_email"),
+            "full_name" => decryptText($user["full_name"], "_full_name"),
             "is_admin" => $user["is_admin"]
         );
         AuthUtil::createUserData($userData);
@@ -146,7 +143,7 @@ class RegisterController extends ComponentController
         $mail = new Mailer();
         $templateData = [
             "title" => "Welcome to " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])),
-            "user_name" => $user["full_name"],
+            "user_name" => decryptText($user["full_name"], "_full_name"),
             "sender_name" => $_ENV["MAIL_FROM_NAME"],
         ];
 
@@ -163,7 +160,7 @@ class RegisterController extends ComponentController
 
             $authenticationsModel->create([
                 "user_id" => $user["id"],
-                "unique_identifier" => $uniqueIdentifier,
+                "unique_identifier" => encryptText($uniqueIdentifier, "_unique_identifier"),
                 "type" => AuthTypes::EMAIL_VERIFICATION->name
             ]);
 
@@ -176,7 +173,7 @@ class RegisterController extends ComponentController
 
         $mail->setHtmlTemplate($templateFile, $templateData)
             ->addSubject("Welcome to " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])))
-            ->addRecipient($user["email"])
+            ->addRecipient(decryptText($user["email"], "_email"))
             ->setReplyTo($_ENV["MAIL_FROM_ADDRESS"], $_ENV["MAIL_FROM_NAME"])
             ->send();
 

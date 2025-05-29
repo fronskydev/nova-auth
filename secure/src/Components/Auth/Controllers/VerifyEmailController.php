@@ -31,8 +31,15 @@ class VerifyEmailController extends ComponentController
 
         $uniqueIdentifier = $args[0];
         $authenticationsModel = new Authentications();
-        $authentication = $authenticationsModel->query("SELECT * FROM authentications WHERE unique_identifier = '" . $uniqueIdentifier . "' AND type = '" . AuthTypes::EMAIL_VERIFICATION->name . "';");
-        if (!$authentication) {
+        $authentication = $authenticationsModel->all();
+        $found = false;
+        foreach ($authentication as $key) {
+            if (decryptText($key["unique_identifier"], "_unique_identifier") === $uniqueIdentifier && $key["type"] === AuthTypes::EMAIL_VERIFICATION->name) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
             return 404;
         }
 
@@ -52,7 +59,7 @@ class VerifyEmailController extends ComponentController
             $authenticationsModel->create([
                 "user_id" => $user["id"],
                 "type" => AuthTypes::EMAIL_VERIFICATION->name,
-                "unique_identifier" => $uniqueIdentifier
+                "unique_identifier" => encryptText($uniqueIdentifier, "_unique_identifier")
             ]);
 
             $mail = new Mailer();
@@ -124,7 +131,7 @@ class VerifyEmailController extends ComponentController
 
         $authenticationsModel->create([
             "user_id" => $user["id"],
-            "unique_identifier" => $uniqueIdentifier,
+            "unique_identifier" => encryptText($uniqueIdentifier, "_unique_identifier"),
             "type" => AuthTypes::EMAIL_VERIFICATION->name
         ]);
 
@@ -132,7 +139,7 @@ class VerifyEmailController extends ComponentController
         $title = "Verify your email for your " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])) . " account";
         $templateData = [
             "title" => $title,
-            "user_name" => $user["full_name"],
+            "user_name" => decryptText($user["full_name"], "_full_name"),
             "sender_name" => $_ENV["MAIL_FROM_NAME"],
             "action_url" => PUBLIC_URL . "/verify-email/" . $uniqueIdentifier,
             "action_text" => "Verify Email"
@@ -140,7 +147,7 @@ class VerifyEmailController extends ComponentController
 
         $mail->setHtmlTemplate(MAILER_DIR . "/verify-email.html", $templateData)
             ->addSubject($title)
-            ->addRecipient($user["email"])
+            ->addRecipient(decryptText($user["email"], "_email"))
             ->setReplyTo($_ENV["MAIL_FROM_ADDRESS"], $_ENV["MAIL_FROM_NAME"])
             ->send();
 

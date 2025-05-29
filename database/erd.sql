@@ -1,24 +1,22 @@
 CREATE TABLE users (
-    id INT auto_increment PRIMARY KEY
-    ,username VARCHAR(100) NOT NULL
-    ,email VARCHAR(255) NOT NULL
-    ,full_name VARCHAR(200) NOT NULL
-    ,password VARCHAR(255) NULL
-    ,password_salt VARCHAR(255) NULL
-    ,is_active TINYINT (1) DEFAULT 1 NULL
-    ,is_admin TINYINT (1) DEFAULT 0 NULL
-    ,is_social TINYINT (1) DEFAULT 0 NULL
-    ,email_verified TINYINT (1) DEFAULT 0 NULL
-    ,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL
-    ,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
-    ,CONSTRAINT email UNIQUE (email)
-    ,CONSTRAINT username UNIQUE (username)
+    id INT AUTO_INCREMENT PRIMARY KEY
+    ,username TEXT NOT NULL
+    ,email TEXT NOT NULL
+    ,full_name TEXT NOT NULL
+    ,password TEXT NULL
+    ,password_salt TEXT NULL
+    ,is_active TINYINT(1) NOT NULL DEFAULT 1
+    ,is_admin TINYINT(1) NOT NULL DEFAULT 0
+    ,is_social TINYINT(1) NOT NULL DEFAULT 0
+    ,email_verified TINYINT(1) NOT NULL DEFAULT 0
+    ,created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ,updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE authentications (
     id INT auto_increment PRIMARY KEY
     ,user_id INT NULL
-    ,unique_identifier VARCHAR(255) NOT NULL
+    ,unique_identifier TEXT NOT NULL
     ,type enum('EMAIL_VERIFICATION', 'PASSWORD_RESET') NOT NULL
     ,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL
     ,CONSTRAINT authentications_ibfk_1 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

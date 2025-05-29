@@ -8,7 +8,7 @@ class Authentications extends Model
 {
     protected function getTable(): string
     {
-       return "authentications";
+        return "authentications";
     }
 
     /**
@@ -21,15 +21,18 @@ class Authentications extends Model
      */
     public function generateUniqueIdentifier(): string
     {
-        $unique_identifier = "";
-        $found = true;
-        while ($found) {
+        do {
             $unique_identifier = generateRandomString(32);
-            $row = $this->findBy("unique_identifier", $unique_identifier);
-            if (!$row) {
-                $found = false;
+            $exists = false;
+
+            foreach ($this->all() as $row) {
+                if (decryptText($row["unique_identifier"], "_unique_identifier") === $unique_identifier) {
+                    $exists = true;
+                    break;
+                }
             }
-        }
+
+        } while ($exists);
 
         return $unique_identifier;
     }

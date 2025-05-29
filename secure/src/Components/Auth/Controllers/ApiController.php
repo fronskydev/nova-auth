@@ -66,9 +66,9 @@ class ApiController extends ComponentController
         $userUsername = $usersModel->getUserDetails($result["username"]);
         if (empty($userEmail) && empty($userUsername)) {
             $usersModel->create(array(
-                "username" => $result["username"],
-                "email" => $result["email"],
-                "full_name" => $result["full_name"],
+                "username" => encryptText($result["username"], "_username"),
+                "email" => encryptText($result["email"], "_email"),
+                "full_name" => encryptText($result["full_name"], "_full_name"),
                 "is_active" => 1,
                 "is_admin" => 0,
                 "is_social" => 1,
@@ -99,9 +99,9 @@ class ApiController extends ComponentController
                 }
 
                 $usersModel->update($userEmail["id"], array(
-                    "username" => $uniqueUsername,
-                    "email" => $result["email"],
-                    "full_name" => $result["full_name"],
+                    "username" => encryptText($uniqueUsername, "_username"),
+                    "email" => encryptText($result["email"], "_email"),
+                    "full_name" => encryptText($result["full_name"], "_full_name"),
                     "is_active" => 1,
                     "is_admin" => 0,
                     "is_social" => 1,
@@ -109,9 +109,9 @@ class ApiController extends ComponentController
                 ));
             } else {
                 $usersModel->update($userEmail["id"], array(
-                    "email" => $result["email"],
-                    "username" => $result["username"],
-                    "full_name" => $result["full_name"],
+                    "email" => encryptText($result["email"], "_email"),
+                    "username" => encryptText($result["username"], "_username"),
+                    "full_name" => encryptText($result["full_name"], "_full_name"),
                     "is_active" => 1,
                     "is_admin" => 0,
                     "is_social" => 1,
@@ -122,9 +122,9 @@ class ApiController extends ComponentController
 
         if (!empty($userEmail) && empty($userUsername)) {
             $usersModel->update($userEmail["id"], array(
-                "email" => $result["email"],
-                "username" => $result["username"],
-                "full_name" => $result["full_name"],
+                "email" => encryptText($result["email"], "_email"),
+                "username" => encryptText($result["username"], "_username"),
+                "full_name" => encryptText($result["full_name"], "_full_name"),
                 "is_active" => 1,
                 "is_admin" => 0,
                 "is_social" => 1,
@@ -140,9 +140,9 @@ class ApiController extends ComponentController
             }
 
             $usersModel->create(array(
-                "username" => $uniqueUsername,
-                "email" => $result["email"],
-                "full_name" => $result["full_name"],
+                "username" => encryptText($uniqueUsername, "_username"),
+                "email" => encryptText($result["email"], "_email"),
+                "full_name" => encryptText($result["full_name"], "_full_name"),
                 "is_active" => 1,
                 "is_admin" => 0,
                 "is_social" => 1,
@@ -167,9 +167,9 @@ class ApiController extends ComponentController
         $user = $usersModel->getUserDetails($result["email"]);
         $userData = array(
             "id" => $user["id"],
-            "username" => $user["username"],
-            "email" => $user["email"],
-            "full_name" => $user["full_name"],
+            "username" => decryptText($user["username"], "_username"),
+            "email" => decryptText($user["email"], "_email"),
+            "full_name" => decryptText($user["full_name"], "_full_name"),
             "is_admin" => $user["is_admin"],
         );
 
