@@ -56,8 +56,8 @@ class AuthUtil
             return null;
         }
 
-        $data = decryptData($value);
-        if (empty($data)) {
+        $data = decryptData($value, "_user");
+        if (empty($data) || !is_array($data)) {
             self::logoutClient();
             return null;
         }
@@ -86,11 +86,10 @@ class AuthUtil
      *
      * @param array $data The user data to be encrypted and stored.
      * @return void
-     * @throws RandomException If encryption fails.
      */
     public static function createUserData(array $data): void
     {
-        $encryptedData = encryptData($data);
+        $encryptedData = encryptData($data, "_user");
 
         if (self::isClientLoggedIn()) {
             self::logoutClient();

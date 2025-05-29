@@ -43,17 +43,17 @@ class AuthComponent extends Component
                 PageUtil::redirect(self::LOGIN_PATH);
                 return 302;
             }
-            if ($user["username"] !== AuthUtil::getUserData()["username"]) {
+            if (decryptText($user["username"], "_username") !== AuthUtil::getUserData()["username"]) {
                 AuthUtil::logoutClient();
                 PageUtil::redirect(self::LOGIN_PATH);
                 return 302;
             }
-            if ($user["email"] !== AuthUtil::getUserData()["email"]) {
+            if (decryptText($user["email"], "_email") !== AuthUtil::getUserData()["email"]) {
                 AuthUtil::logoutClient();
                 PageUtil::redirect(self::LOGIN_PATH);
                 return 302;
             }
-            if ($user["full_name"] !== AuthUtil::getUserData()["full_name"]) {
+            if (decryptText($user["full_name"], "_full_name") !== AuthUtil::getUserData()["full_name"]) {
                 AuthUtil::logoutClient();
                 PageUtil::redirect(self::LOGIN_PATH);
                 return 302;

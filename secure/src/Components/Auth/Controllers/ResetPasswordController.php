@@ -14,7 +14,6 @@ class ResetPasswordController extends ComponentController
 {
     private const string FORGOT_PASSWORD_PATH = "/forgot-password";
     private const string RESET_PASSWORD_PATH = "/reset-password";
-    private const string AUTH_SQL_QUERY = "SELECT * FROM authentications WHERE unique_identifier = '%s' AND type = '" . AuthTypes::PASSWORD_RESET->name . "';";
     private PageInfo $pageInfo;
 
     public function __construct()
@@ -33,8 +32,15 @@ class ResetPasswordController extends ComponentController
 
         $uniqueIdentifier = $args[0];
         $authenticationsModel = new Authentications();
-        $authentication = $authenticationsModel->query(str_replace("%s", $uniqueIdentifier, self::AUTH_SQL_QUERY));
-        if (!$authentication) {
+        $authentication = $authenticationsModel->all();
+        $found = false;
+        foreach ($authentication as $key) {
+            if (decryptText($key["unique_identifier"], "_unique_identifier") === $uniqueIdentifier && $key["type"] === AuthTypes::PASSWORD_RESET->name) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
             return 404;
         }
 
@@ -69,7 +75,7 @@ class ResetPasswordController extends ComponentController
             "auth.css"
         ];
         $data = [
-            "authKey" => encryptText($authentication["unique_identifier"])
+            "authKey" => encryptText($authentication["unique_identifier"], "_unique_identifier"),
         ];
         $this->render("reset-password", $data, $this->pageInfo);
         return 200;
@@ -87,10 +93,17 @@ class ResetPasswordController extends ComponentController
                 return 200;
             }
 
-            $uniqueIdentifier = decryptText($_POST["auth-key"]);
+            $uniqueIdentifier = decryptText($_POST["auth-key"], "_unique_identifier");
             $authenticationsModel = new Authentications();
-            $authentication = $authenticationsModel->query(str_replace("%s", $uniqueIdentifier, self::AUTH_SQL_QUERY));
-            if (!$authentication) {
+            $authentication = $authenticationsModel->all();
+            $found = false;
+            foreach ($authentication as $key) {
+                if (decryptText($key["unique_identifier"], "_unique_identifier") === $uniqueIdentifier && $key["type"] === AuthTypes::PASSWORD_RESET->name) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
                 PageUtil::redirect(self::FORGOT_PASSWORD_PATH);
                 return 200;
             }
@@ -103,10 +116,17 @@ class ResetPasswordController extends ComponentController
             return 200;
         }
 
-        $uniqueIdentifier = decryptText($_POST["auth-key"]);
+        $uniqueIdentifier = decryptText($_POST["auth-key"], "_unique_identifier");
         $authenticationsModel = new Authentications();
-        $authentication = $authenticationsModel->query(str_replace("%s", $uniqueIdentifier, self::AUTH_SQL_QUERY));
-        if (!$authentication) {
+        $authentication = $authenticationsModel->all();
+        $found = false;
+        foreach ($authentication as $key) {
+            if (decryptText($key["unique_identifier"], "_unique_identifier") === $uniqueIdentifier && $key["type"] === AuthTypes::PASSWORD_RESET->name) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
             PageUtil::redirect(self::FORGOT_PASSWORD_PATH);
             return 200;
         }
@@ -138,12 +158,12 @@ class ResetPasswordController extends ComponentController
             return 200;
         }
 
-        $passwordSalt = generateRandomString(16);
-        $password = encryptText($_POST["password"] . $passwordSalt);
+        $passwordSalt = generateRandomString(32);
+        $password = $_POST["password"] . $passwordSalt;
         $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
         $usersModel->update($user["id"], array(
             "password" => $passwordHash,
-            "password_salt" => encryptText($passwordSalt)
+            "password_salt" => encryptText($passwordSalt, "_password_salt")
         ));
 
         $authenticationsModel->delete($authentication["id"]);

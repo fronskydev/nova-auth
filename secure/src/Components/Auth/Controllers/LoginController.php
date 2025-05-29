@@ -85,27 +85,27 @@ class LoginController extends ComponentController
             return 200;
         }
 
-        $passwordSalt = decryptText($user["password_salt"]);
-        $password = encryptText($_POST["password"] . $passwordSalt);
+        $passwordSalt = decryptText($user["password_salt"], "_password_salt");
+        $password = $_POST["password"] . $passwordSalt;
         if (!password_verify($password, $user["password"])) {
             $errorMsg = "Invalid username/email or password.";
             PageUtil::redirect(self::LOGIN_PATH, array("ERROR" => $errorMsg, "data" => json_encode($_POST)));
             return 200;
         }
 
-        $newSalt = generateRandomString(16);
-        $newPassword = encryptText($_POST["password"] . $newSalt);
+        $newSalt = generateRandomString(32);
+        $newPassword = $_POST["password"] . $newSalt;
         $newPasswordHash = password_hash($newPassword, PASSWORD_ARGON2ID);
         $usersModel->update($user["id"], array(
-            "password_salt" => encryptText($newSalt),
+            "password_salt" => encryptText($newSalt, "_password_salt"),
             "password" => $newPasswordHash
         ));
 
         $userData = array(
             "id" => $user["id"],
-            "username" => $user["username"],
-            "email" => $user["email"],
-            "full_name" => $user["full_name"],
+            "username" => decryptText($user["username"], "_username"),
+            "email" => decryptText($user["email"], "_email"),
+            "full_name" => decryptText($user["full_name"], "_full_name"),
             "is_admin" => $user["is_admin"]
         );
         AuthUtil::createUserData($userData);

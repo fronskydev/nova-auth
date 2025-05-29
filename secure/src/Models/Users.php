@@ -8,7 +8,7 @@ class Users extends Model
 {
     protected function getTable(): string
     {
-       return "users";
+        return "users";
     }
 
     /**
@@ -27,14 +27,11 @@ class Users extends Model
             return $user[0];
         }
 
-        $user = $this->findBy("username", $uid);
-        if ($user) {
-            return $user[0];
-        }
-
-        $user = $this->findBy("email", $uid);
-        if ($user) {
-            return $user[0];
+        $users = $this->all();
+        foreach ($users as $user) {
+            if (decryptText($user["username"], "_username") === $uid || decryptText($user["email"], "_email") === $uid) {
+                return $user;
+            }
         }
 
         return [];
