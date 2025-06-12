@@ -2,8 +2,6 @@
 $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
 ?>
 
-<br /><br /><br /><br />
-
 <div class="auth-content">
     <div class="text-center">
         <a href="<?= PUBLIC_URL ?>">

@@ -75,7 +75,7 @@ class ResetPasswordController extends ComponentController
             "auth.css"
         ];
         $data = [
-            "authKey" => encryptText($authentication["unique_identifier"], "_unique_identifier"),
+            "authKey" => encryptText($uniqueIdentifier, "_unique_identifier"),
         ];
         $this->render("reset-password", $data, $this->pageInfo);
         return 200;
