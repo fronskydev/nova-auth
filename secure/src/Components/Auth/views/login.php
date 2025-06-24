@@ -33,21 +33,6 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary default-rounded">Sign in</button>
                 </div>
-
-                <?php if (isset($_POST["ERROR"])) { ?>
-                    <p class="mt-3 mb-0 text-danger text-center">
-                        <?= $_POST["ERROR"] ?>
-                    </p>
-                <?php } if (isset($_POST["ERROR"]) && $_POST["ERROR"] === "Your email address is not verified yet.") { ?>
-                    <p class="mt-1 mb-0 text-body-secondary text-center fst-italic" style="font-size: 0.9rem;">
-                        Send a new verification email? <a class="text-decoration-none" href="<?= PUBLIC_URL . "/resend-verification-email/" . encryptText($data["uid"] ?? "") ?>">Click here</a>.
-                    </p>
-                <?php } ?>
-                <?php if (isset($_POST["SUCCESS"])) { ?>
-                    <p class="mt-3 mb-0 text-success text-center">
-                        <?= $_POST["SUCCESS"] ?>
-                    </p>
-                <?php } ?>
             </form>
 
             <?php if ($_ENV["FRONSKY_API_ENABLED"] == "true") { ?>
@@ -56,6 +41,21 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
                         Continue with Fronsky®
                     </a>
                 </div>
+            <?php } ?>
+
+            <?php if (isset($_POST["ERROR"])) { ?>
+                <p class="mt-3 mb-0 text-danger text-center">
+                    <?= $_POST["ERROR"] ?>
+                </p>
+            <?php } if (isset($_POST["ERROR"]) && $_POST["ERROR"] === "Your email address is not verified yet.") { ?>
+                <p class="mt-1 mb-0 text-body-secondary text-center fst-italic" style="font-size: 0.9rem;">
+                    Send a new verification email? <a class="text-decoration-none" href="<?= PUBLIC_URL . "/resend-verification-email/" . encryptText($data["uid"] ?? "") ?>">Click here</a>.
+                </p>
+            <?php } ?>
+            <?php if (isset($_POST["SUCCESS"])) { ?>
+                <p class="mt-3 mb-0 text-success text-center">
+                    <?= $_POST["SUCCESS"] ?>
+                </p>
             <?php } ?>
         </div>
     </div>

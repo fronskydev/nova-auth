@@ -131,15 +131,6 @@ class RegisterController extends ComponentController
             return 200;
         }
 
-        $userData = array(
-            "id" => $user["id"],
-            "username" => decryptText($user["username"], "_username"),
-            "email" => decryptText($user["email"], "_email"),
-            "full_name" => decryptText($user["full_name"], "_full_name"),
-            "is_admin" => $user["is_admin"]
-        );
-        AuthUtil::createUserData($userData);
-
         $mail = new Mailer();
         $templateData = [
             "title" => "Welcome to " . ucwords(str_replace(['-', '_'], ' ', $_ENV["APP_NAME"])),
@@ -177,7 +168,12 @@ class RegisterController extends ComponentController
             ->setReplyTo($_ENV["MAIL_FROM_ADDRESS"], $_ENV["MAIL_FROM_NAME"])
             ->send();
 
-        PageUtil::redirect(AuthComponent::getSettings()["register.redirect_to"]);
+        $successMsg = "Your account has been created successfully. You can now log in.";
+        if (AuthComponent::getSettings()["verify_email.enabled"]) {
+            $successMsg = "Your account has been created successfully. We’ve sent a verification email to your inbox. Please confirm your email address before logging in. If you don’t see the email, check your spam folder.";
+        }
+
+        PageUtil::redirect(AuthComponent::getSettings()["register.redirect_to"], array("SUCCESS" => $successMsg));
         return 200;
     }
 
