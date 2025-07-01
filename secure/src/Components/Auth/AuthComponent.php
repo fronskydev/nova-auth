@@ -22,8 +22,8 @@ class AuthComponent extends Component
         "password.require_special_characters" => true,
 
         "login.redirect_to" => "/",
-        "register.redirect_to" => "/",
-        "logout.redirect_to" => "/login",
+        "register.redirect_to" => "/login",
+        "logout.redirect_to" => "/",
     ];
 
     public function __construct()

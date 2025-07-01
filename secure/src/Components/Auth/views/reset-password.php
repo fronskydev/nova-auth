@@ -36,13 +36,13 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary default-rounded">Reset password</button>
                 </div>
-
-                <?php if (isset($_POST["ERROR"])) { ?>
-                    <p class="mt-3 mb-0 text-danger text-center">
-                        <?= $_POST["ERROR"] ?>
-                    </p>
-                <?php } ?>
             </form>
+
+            <?php if (isset($_POST["ERROR"])) { ?>
+                <p class="mt-3 mb-0 text-danger text-center">
+                    <?= $_POST["ERROR"] ?>
+                </p>
+            <?php } ?>
         </div>
     </div>
 

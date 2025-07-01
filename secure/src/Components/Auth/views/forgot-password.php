@@ -30,18 +30,18 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary default-rounded">Send email</button>
                 </div>
-
-                <?php if (isset($_POST["ERROR"])) { ?>
-                    <p class="mt-3 mb-0 text-danger text-center">
-                        <?= $_POST["ERROR"] ?>
-                    </p>
-                <?php } ?>
-                <?php if (isset($_POST["SUCCESS"])) { ?>
-                    <p class="mt-3 mb-0 text-success text-center">
-                        <?= $_POST["SUCCESS"] ?>
-                    </p>
-                <?php } ?>
             </form>
+
+            <?php if (isset($_POST["ERROR"])) { ?>
+                <p class="mt-3 mb-0 text-danger text-center">
+                    <?= $_POST["ERROR"] ?>
+                </p>
+            <?php } ?>
+            <?php if (isset($_POST["SUCCESS"])) { ?>
+                <p class="mt-3 mb-0 text-success text-center">
+                    <?= $_POST["SUCCESS"] ?>
+                </p>
+            <?php } ?>
         </div>
     </div>
 

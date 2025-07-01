@@ -47,21 +47,21 @@ $data = isset($_POST["data"]) ? json_decode($_POST["data"], true) : [];
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary default-rounded">Sign up</button>
                 </div>
-
-                <?php if (isset($_POST["ERROR"])) { ?>
-                    <p class="mt-3 mb-0 text-danger text-center">
-                        <?= $_POST["ERROR"] ?>
-                    </p>
-                <?php } ?>
-
-                <?php if ($_ENV["FRONSKY_API_ENABLED"] == "true") { ?>
-                    <div class="d-grid mt-3">
-                        <a href="<?= PUBLIC_URL . "/api/login" ?>" class="btn btn-secondary default-rounded">
-                            Continue with Fronsky®
-                        </a>
-                    </div>
-                <?php } ?>
             </form>
+
+            <?php if ($_ENV["FRONSKY_API_ENABLED"] == "true") { ?>
+                <div class="d-grid mt-3">
+                    <a href="<?= PUBLIC_URL . "/api/login" ?>" class="btn btn-secondary default-rounded">
+                        Continue with Fronsky®
+                    </a>
+                </div>
+            <?php } ?>
+
+            <?php if (isset($_POST["ERROR"])) { ?>
+                <p class="mt-3 mb-0 text-danger text-center">
+                    <?= $_POST["ERROR"] ?>
+                </p>
+            <?php } ?>
         </div>
     </div>
 
