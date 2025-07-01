@@ -24,7 +24,7 @@ Nova Auth is an advanced user authentication component for the Nova Framework.
 
 ## Requirements
 
-- PHP 8.3 or higher
+- PHP 8.4 or higher
 - Composer
 - MySQL (or other supported database for Doctrine DBAL)
 - A Project using the Nova Framework
